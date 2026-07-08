@@ -9,10 +9,10 @@ RUN dotnet restore "./WebApp2/WebApp2.csproj"
 # Copy source code
 COPY . .
 
-# Build application
-RUN dotnet build "./WebApp2/WebApp2.csproj" -c Release -o /app/build
+# Publish application
+RUN dotnet publish "./WebApp2/WebApp2.csproj" -c Release -o /app/publish
 
-# Publish stage
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 EXPOSE 3000
@@ -20,8 +20,8 @@ EXPOSE 3000
 ENV ASPNETCORE_URLS=http://+:3000
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-# Copy published app
-COPY --from=build /app/build .
+# Copy published app from build stage
+COPY --from=build /app/publish .
 
 # Run the application
 ENTRYPOINT ["dotnet", "WebApp2.dll"]
