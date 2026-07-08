@@ -1,91 +1,215 @@
-</html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WebApp2 API</title>
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f4f6f8;margin:0;padding:20px}
-    .card{background:#fff;padding:28px;border-radius:8px;box-shadow:0 6px 18px rgba(15,23,42,0.08);max-width:920px;width:100%}
-    h1{margin:0 0 8px;font-size:20px}
-    p{margin:0 0 16px;color:#444}
-    .list{background:#f8fafc;padding:12px;border-radius:6px;margin-bottom:16px}
-    code{background:#f1f5f9;padding:2px 6px;border-radius:4px}
-    .btn{display:inline-block;margin:6px 6px 0 0;padding:8px 12px;border-radius:6px;border:1px solid #e2e8f0;background:#fff;cursor:pointer}
-    .btn-primary{background:#2563eb;color:#fff;border-color:transparent}
-    .response{white-space:pre-wrap;background:#111827;color:#f8fafc;padding:12px;border-radius:6px;margin-top:12px;max-height:300px;overflow:auto;font-family:monospace;font-size:13px}
-    .links a{display:inline-block;margin-right:10px;color:#2563eb;text-decoration:none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebApp2 API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .status {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .endpoints {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .endpoints h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .endpoint {
+            background: white;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .endpoint:last-child {
+            margin-bottom: 0;
+        }
+
+        .method {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        .get { background: #e3f2fd; color: #1976d2; }
+        .post { background: #f3e5f5; color: #7b1fa2; }
+        .put { background: #fff3e0; color: #e65100; }
+        .delete { background: #ffebee; color: #c62828; }
+
+        .path {
+            flex: 1;
+            color: #666;
+        }
+
+        .info {
+            background: #e7f3ff;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            color: #1565c0;
+        }
+
+        .footer {
+            text-align: center;
+            color: #999;
+            margin-top: 30px;
+            font-size: 0.9em;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .tech {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .tech strong {
+            display: block;
+            color: #333;
+            margin-bottom: 4px;
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h1>WebApp2 API — Landing & Test</h1>
-    <p>This page links to the running API endpoints and to source files in the GitHub repo.</p>
+    <div class="container">
+        <h1>🚀 WebApp2 API</h1>
+        <p class="subtitle">ASP.NET Core REST API running on .NET 10</p>
 
-    <div class="list">
-      <div><strong>API Endpoints (relative)</strong></div>
-      <div><code>/api/employees</code></div>
-      <div><code>/api/employees/{id}</code></div>
-      <div><code>/weatherforecast</code></div>
-      <div><code>/health</code></div>
+        <div class="status">✓ API is running</div>
+
+        <div class="info">
+            <strong>📌 Welcome!</strong> This is your API's home page. Use the endpoints below to interact with your application.
+        </div>
+
+        <div class="endpoints">
+            <h2>Available Endpoints</h2>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/employees</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/employees/{id}</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/employees</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method put">PUT</span>
+                <span class="path">/api/employees/{id}</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method delete">DELETE</span>
+                <span class="path">/api/employees/{id}</span>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/weatherforecast</span>
+            </div>
+        </div>
+
+        <div>
+            <h3 style="color: #333; margin-bottom: 10px;">Technology Stack</h3>
+            <div class="tech-stack">
+                <div class="tech">
+                    <strong>.NET</strong>
+                    10
+                </div>
+                <div class="tech">
+                    <strong>Framework</strong>
+                    ASP.NET Core
+                </div>
+                <div class="tech">
+                    <strong>Database</strong>
+                    SQLite
+                </div>
+                <div class="tech">
+                    <strong>ORM</strong>
+                    EF Core
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>For API documentation, visit <code>/openapi/v1.json</code> (Development only)</p>
+            <p>© 2025 WebApp2. All rights reserved.</p>
+        </div>
     </div>
-
-    <div>
-      <button class="btn btn-primary" id="btn-list">GET /api/employees</button>
-      <button class="btn" id="btn-weather">GET /weatherforecast</button>
-      <button class="btn" id="btn-health">GET /health</button>
-      <button class="btn" id="btn-openapi">OpenAPI (dev): /openapi/v1.json</button>
-      <div class="response" id="output">Response output will appear here.</div>
-    </div>
-
-    <hr style="margin:18px 0">
-
-    <div>
-      <h3>Repository Files</h3>
-      <p class="links">
-        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/Program.cs" target="_blank">Program.cs</a>
-        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/Controllers/EmployeesController.cs" target="_blank">EmployeesController.cs</a>
-        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/Controllers/WeatherForecastController.cs" target="_blank">WeatherForecastController.cs</a>
-        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/Data/AppDbContext.cs" target="_blank">AppDbContext.cs</a>
-        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/Models/Employee.cs" target="_blank">Employee.cs</a>
-        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/WebApp2.csproj" target="_blank">WebApp2.csproj</a>
-      </p>
-      <p style="color:#666;margin-top:8px">Open any link to view the source in GitHub.</p>
-    </div>
-  </div>
-
-  <script>
-    const out = (v) => { document.getElementById('output').textContent = v; };
-
-    async function fetchJson(path) {
-      try {
-        const res = await fetch(path, {cache: 'no-store'});
-        const text = await res.text();
-        // Try pretty parse if JSON
-        try { return JSON.stringify(JSON.parse(text), null, 2); } catch { return text; }
-      } catch (err) {
-        return 'Request failed: ' + err.message;
-      }
-    }
-
-    document.getElementById('btn-list').addEventListener('click', async () => {
-      out('Loading /api/employees ...');
-      out(await fetchJson('/api/employees'));
-    });
-
-    document.getElementById('btn-weather').addEventListener('click', async () => {
-      out('Loading /weatherforecast ...');
-      out(await fetchJson('/weatherforecast'));
-    });
-
-    document.getElementById('btn-health').addEventListener('click', async () => {
-      out('Checking /health ...');
-      out(await fetchJson('/health'));
-    });
-
-    document.getElementById('btn-openapi').addEventListener('click', () => {
-      window.open('/openapi/v1.json', '_blank');
-    });
-  </script>
 </body>
 </html>
