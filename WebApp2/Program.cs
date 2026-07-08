@@ -34,10 +34,36 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors();
-app.UseHttpsRedirection();
+
+// Skip HTTPS redirect in production (Vercel handles it)
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Root endpoint - fixes 404 error
+app.MapGet("/", () => Results.Ok(new 
+{ 
+    message = "WebApp2 API - .NET 10 Running",
+    version = "1.0.0",
+    timestamp = DateTime.UtcNow,
+    availableEndpoints = new[] 
+    { 
+        "GET /api/employees",
+        "GET /api/employees/{id}",
+        "POST /api/employees",
+        "PUT /api/employees/{id}",
+        "DELETE /api/employees/{id}",
+        "GET /weatherforecast",
+        "GET /health"
+    }
+}));
+
+// Health check endpoint
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
 
 app.Run();
