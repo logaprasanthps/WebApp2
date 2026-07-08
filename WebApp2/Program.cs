@@ -36,8 +36,14 @@ using (var scope = app.Services.CreateScope())
 app.UseCors();
 app.UseHttpsRedirection();
 
+// Serve static files from wwwroot
+app.UseStaticFiles();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Serve index.html as fallback for root path
+app.MapFallbackToFile("index.html");
 
 app.Run();
