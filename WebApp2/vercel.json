@@ -3,7 +3,8 @@
   "builds": [
     {
       "src": "Dockerfile",
-      "use": "@vercel/dockerfile"
+      "use": "@vercel/dockerfile",
+      "config": { "maxLambdaSize": "3008mb" }
     }
   ],
   "routes": [
@@ -11,5 +12,9 @@
       "src": "/(.*)",
       "dest": "/"
     }
-  ]
+  ],
+  "env": {
+    "ASPNETCORE_ENVIRONMENT": "Production",
+    "ASPNETCORE_URLS": "http://+:8080"
+  }
 }

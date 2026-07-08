@@ -5,65 +5,120 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-// Enable CORS for frontend
+// Enable CORS
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
-// Configure EF Core with SQLite
+// Configure database - use temp directory in production
+var dbPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production"
+    ? Path.Combine(Path.GetTempPath(), "employees.db")
+    : "employees.db";
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=employees.db"));
+    options.UseSqlite($"Data Source={dbPath}"));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-// Ensure database exists
-using (var scope = app.Services.CreateScope())
+// Error handling middleware
+app.UseExceptionHandler(errorApp =>
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsJsonAsync(new 
+        { 
+            error = "Internal Server Error",
+            timestamp = DateTime.UtcNow
+        });
+    });
+});
+
+// Initialize database
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.EnsureCreated();
+        Console.WriteLine($"✓ Database initialized at: {dbPath}");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"✗ Database error: {ex.Message}");
 }
 
 app.UseCors();
 
-// Skip HTTPS redirect in production (Vercel handles it)
+// HTTPS only in development
 if (!app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
 }
 
+app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllers();
 
-// Root endpoint - fixes 404 error
+// Root endpoint
 app.MapGet("/", () => Results.Ok(new 
 { 
-    message = "WebApp2 API - .NET 10 Running",
+    status = "✓ WebApp2 API Running",
+    environment = app.Environment.EnvironmentName,
+    framework = ".NET 10",
     version = "1.0.0",
     timestamp = DateTime.UtcNow,
-    availableEndpoints = new[] 
-    { 
-        "GET /api/employees",
-        "GET /api/employees/{id}",
-        "POST /api/employees",
-        "PUT /api/employees/{id}",
-        "DELETE /api/employees/{id}",
-        "GET /weatherforecast",
-        "GET /health"
+    endpoints = new object[]
+    {
+        new { method = "GET", path = "/api/employees", description = "List all employees" },
+        new { method = "GET", path = "/api/employees/{id}", description = "Get employee by ID" },
+        new { method = "POST", path = "/api/employees", description = "Create new employee" },
+        new { method = "PUT", path = "/api/employees/{id}", description = "Update employee" },
+        new { method = "DELETE", path = "/api/employees/{id}", description = "Delete employee" },
+        new { method = "GET", path = "/weatherforecast", description = "Get weather forecast" },
+        new { method = "GET", path = "/health", description = "Health check" }
     }
 }));
 
 // Health check endpoint
-app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+app.MapGet("/health", async (AppDbContext db) =>
+{
+    try
+    {
+        await db.Database.CanConnectAsync();
+        return Results.Ok(new 
+        { 
+            status = "healthy",
+            database = "connected",
+            timestamp = DateTime.UtcNow
+        });
+    }
+    catch (Exception ex)
+    {
+        return Results.Json(new 
+        { 
+            status = "unhealthy",
+            error = ex.Message,
+            timestamp = DateTime.UtcNow
+        }, statusCode: 503);
+    }
+});
+
+Console.WriteLine("🚀 Starting WebApp2 API...");
+Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
+Console.WriteLine($"Database: {dbPath}");
 
 app.Run();
+
