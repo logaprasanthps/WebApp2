@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "Dockerfile", "use": "@vercel/dockerfile" }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ],
+  "env": {
+    "ASPNETCORE_ENVIRONMENT": "Production",
+    "ASPNETCORE_URLS": "http://+:8080"
+  }
+}
