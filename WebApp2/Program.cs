@@ -5,10 +5,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-// Enable CORS for frontend
+// Enable CORS
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
@@ -34,10 +33,31 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors();
-app.UseHttpsRedirection();
+
+// Don't force HTTPS in production on Vercel
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Health check endpoint
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+
+// Root endpoint
+app.MapGet("/", () => Results.Ok(new 
+{ 
+    message = "WebApp2 API - .NET 10", 
+    endpoints = new[] 
+    { 
+        "/api/employees", 
+        "/weatherforecast", 
+        "/health",
+        "/openapi/v1.json"
+    }
+}));
 
 app.Run();
