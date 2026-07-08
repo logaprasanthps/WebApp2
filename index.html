@@ -1,31 +1,91 @@
-<!DOCTYPE html>
+</html><!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>WebApp2 API</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;display:flex;align-items:center;justify-content:center;height:100vh;background:#f4f6f8;margin:0}
-    .card{background:#fff;padding:28px;border-radius:8px;box-shadow:0 6px 18px rgba(15,23,42,0.08);max-width:720px;width:100%}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f4f6f8;margin:0;padding:20px}
+    .card{background:#fff;padding:28px;border-radius:8px;box-shadow:0 6px 18px rgba(15,23,42,0.08);max-width:920px;width:100%}
     h1{margin:0 0 8px;font-size:20px}
     p{margin:0 0 16px;color:#444}
-    .list{background:#f8fafc;padding:12px;border-radius:6px}
+    .list{background:#f8fafc;padding:12px;border-radius:6px;margin-bottom:16px}
     code{background:#f1f5f9;padding:2px 6px;border-radius:4px}
+    .btn{display:inline-block;margin:6px 6px 0 0;padding:8px 12px;border-radius:6px;border:1px solid #e2e8f0;background:#fff;cursor:pointer}
+    .btn-primary{background:#2563eb;color:#fff;border-color:transparent}
+    .response{white-space:pre-wrap;background:#111827;color:#f8fafc;padding:12px;border-radius:6px;margin-top:12px;max-height:300px;overflow:auto;font-family:monospace;font-size:13px}
+    .links a{display:inline-block;margin-right:10px;color:#2563eb;text-decoration:none}
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>WebApp2 API — Landing</h1>
-    <p>This static page prevents Vercel 404 while the API is hosted elsewhere. API endpoints (if deployed) are:</p>
+    <h1>WebApp2 API — Landing & Test</h1>
+    <p>This page links to the running API endpoints and to source files in the GitHub repo.</p>
+
     <div class="list">
-      <div><strong>GET</strong> <code>/api/employees</code></div>
-      <div><strong>GET</strong> <code>/api/employees/{id}</code></div>
-      <div><strong>POST</strong> <code>/api/employees</code></div>
-      <div><strong>PUT</strong> <code>/api/employees/{id}</code></div>
-      <div><strong>DELETE</strong> <code>/api/employees/{id}</code></div>
-      <div><strong>GET</strong> <code>/weatherforecast</code></div>
+      <div><strong>API Endpoints (relative)</strong></div>
+      <div><code>/api/employees</code></div>
+      <div><code>/api/employees/{id}</code></div>
+      <div><code>/weatherforecast</code></div>
+      <div><code>/health</code></div>
     </div>
-    <p style="margin-top:16px;color:#666">If you want the live API on Vercel, we need a container image or host that runs .NET. I can help with that.</p>
+
+    <div>
+      <button class="btn btn-primary" id="btn-list">GET /api/employees</button>
+      <button class="btn" id="btn-weather">GET /weatherforecast</button>
+      <button class="btn" id="btn-health">GET /health</button>
+      <button class="btn" id="btn-openapi">OpenAPI (dev): /openapi/v1.json</button>
+      <div class="response" id="output">Response output will appear here.</div>
+    </div>
+
+    <hr style="margin:18px 0">
+
+    <div>
+      <h3>Repository Files</h3>
+      <p class="links">
+        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/Program.cs" target="_blank">Program.cs</a>
+        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/Controllers/EmployeesController.cs" target="_blank">EmployeesController.cs</a>
+        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/Controllers/WeatherForecastController.cs" target="_blank">WeatherForecastController.cs</a>
+        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/Data/AppDbContext.cs" target="_blank">AppDbContext.cs</a>
+        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/Models/Employee.cs" target="_blank">Employee.cs</a>
+        <a href="https://github.com/logaprasanthps/WebApp2/blob/master/WebApp2/WebApp2.csproj" target="_blank">WebApp2.csproj</a>
+      </p>
+      <p style="color:#666;margin-top:8px">Open any link to view the source in GitHub.</p>
+    </div>
   </div>
+
+  <script>
+    const out = (v) => { document.getElementById('output').textContent = v; };
+
+    async function fetchJson(path) {
+      try {
+        const res = await fetch(path, {cache: 'no-store'});
+        const text = await res.text();
+        // Try pretty parse if JSON
+        try { return JSON.stringify(JSON.parse(text), null, 2); } catch { return text; }
+      } catch (err) {
+        return 'Request failed: ' + err.message;
+      }
+    }
+
+    document.getElementById('btn-list').addEventListener('click', async () => {
+      out('Loading /api/employees ...');
+      out(await fetchJson('/api/employees'));
+    });
+
+    document.getElementById('btn-weather').addEventListener('click', async () => {
+      out('Loading /weatherforecast ...');
+      out(await fetchJson('/weatherforecast'));
+    });
+
+    document.getElementById('btn-health').addEventListener('click', async () => {
+      out('Checking /health ...');
+      out(await fetchJson('/health'));
+    });
+
+    document.getElementById('btn-openapi').addEventListener('click', () => {
+      window.open('/openapi/v1.json', '_blank');
+    });
+  </script>
 </body>
 </html>
