@@ -3,30 +3,23 @@ using WebApp2.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
-// Enable CORS for frontend
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
-// Configure EF Core with SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=employees.db"));
+    options.UseSqlite("Data Source=employees.db"));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-// Ensure database exists
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -34,24 +27,24 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors();
-app.UseHttpsRedirection();
+
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 
+// ✅ ROOT ENDPOINT - FIXES 404
+app.MapGet("/", () => 
+{
+    return Results.Json(new 
+    { 
+        status = "✅ API Running",
+        message = "WebApp2 API - .NET 10",
+        endpoints = new[] { "/api/employees", "/weatherforecast" }
+    });
+});
+
 app.MapControllers();
-
-// ROOT ENDPOINT - FIX 404 ERROR
-app.MapGet("/", () => Results.Json(new 
-{ 
-    message = "✅ WebApp2 API is Running!",
-    framework = ".NET 10",
-    status = "Active",
-    endpoints = new[] 
-    {
-        "/api/employees",
-        "/weatherforecast",
-        "/openapi/v1.json"
-    }
-}));
-
 app.Run();
