@@ -40,4 +40,18 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// ROOT ENDPOINT - FIX 404 ERROR
+app.MapGet("/", () => Results.Json(new 
+{ 
+    message = "✅ WebApp2 API is Running!",
+    framework = ".NET 10",
+    status = "Active",
+    endpoints = new[] 
+    {
+        "/api/employees",
+        "/weatherforecast",
+        "/openapi/v1.json"
+    }
+}));
+
 app.Run();
