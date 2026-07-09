@@ -8,16 +8,10 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-// Configure CORS - allow Vercel deployments and localhost for development
+// Enable CORS for frontend
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowVercel", policy =>
-    {
-        policy.SetIsOriginAllowed(origin =>
-            !string.IsNullOrEmpty(origin) && (origin.EndsWith(".vercel.app") || origin.Contains("localhost")))
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
+    options.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
 // Configure EF Core with SQLite
@@ -39,7 +33,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
-app.UseCors("AllowVercel");
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
