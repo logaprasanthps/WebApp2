@@ -1,0 +1,13 @@
+employees.db
+employees.db-shm
+employees.db-wal
+**/bin
+**/obj
+.vs
+.vscode
+.idea
+.DS_Store
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
